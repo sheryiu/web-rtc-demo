@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { unzip, zip } from 'gzip-js';
 import { ReplaySubject, Subject } from 'rxjs';
 
 @Injectable({
@@ -40,6 +41,15 @@ export class RtcManagerService {
             resolved = true;
             clearTimeout(timeout)
             resolve(iceCandidates)
+          }
+        }
+      }
+      this.pc!.onconnectionstatechange = (event) => {
+        switch (this.pc?.connectionState) {
+          case 'closed':
+          case 'failed': {
+            alert(`Connection ${ this.pc?.connectionState }`);
+            break;
           }
         }
       }
@@ -108,10 +118,15 @@ export class RtcManagerService {
   }
 
   static formatAsUrl(data: [RTCIceCandidate[], RTCSessionDescriptionInit]) {
-    return encodeURIComponent(btoa(JSON.stringify(data)))
+    const gzipped = zip(JSON.stringify(data), { level: 9 })
+    const gzippedStr = gzipped.map(n => n.toString(16).padStart(2, '0')).join('')
+    return gzippedStr;
   }
 
   static parseFromUrl(data: string): [RTCIceCandidate[], RTCSessionDescriptionInit] {
-    return JSON.parse(atob(decodeURIComponent(data)))
+    const zippedDataSplit = data.match(/.{2}/g) ?? [];
+    const zippedData = zippedDataSplit.map(n => parseInt(n, 16));
+    const final = unzip(zippedData).map(n => String.fromCharCode(n)).join('');
+    return JSON.parse(final)
   }
 }

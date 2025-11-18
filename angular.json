@@ -95,7 +95,8 @@
               "buildTarget": "skyraider:build:production"
             },
             "development": {
-              "buildTarget": "skyraider:build:development"
+              "buildTarget": "skyraider:build:development",
+              "host": "0.0.0.0"
             }
           },
           "defaultConfiguration": "development"

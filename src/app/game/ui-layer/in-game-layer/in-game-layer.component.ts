@@ -24,6 +24,6 @@ export class InGameLayerComponent {
   }
 
   onSetCamera(use2D: boolean) {
-    this.gameController.use2DCamera.set(use2D)
+    this.gameController.changeCameraAngle(use2D);
   }
 }

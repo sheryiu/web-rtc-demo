@@ -1,7 +1,6 @@
-import { effect, Injectable, signal, viewChild } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { Chess, Color, DEFAULT_POSITION, Move, PieceSymbol, ROOK, Square, SQUARES, WHITE } from 'chess.js';
 import { Subject } from 'rxjs';
-import { CameraGameObject } from '../three-js-container/three-js';
 
 function addRank(square: Square, rankDiff: number): Square {
   const [file, rank] = square.split('');
@@ -35,7 +34,7 @@ export class GameControllerService {
     square,
     color: this.chess.squareColor(square),
   }))
-  use2DCamera = signal(false);
+  use2DCamera = signal<boolean | null>(null);
   selectedSquare: Square | null = null;
   validMovesToSquare: Square[] = [];
   isInteractable = signal(false);
@@ -91,6 +90,14 @@ export class GameControllerService {
         }
       }
     }, { allowSignalWrites: true })
+  }
+
+  changeCameraAngle(use2D: boolean) {
+    this.use2DCamera.update(current => {
+      // null acts as 3d mode
+      if (current == null && use2D == false) return null;
+      else return use2D;
+    })
   }
 
   startGame(options: { isWhiteMovable: boolean, isBlackMovable: boolean, fen?: string }) {

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "serve:ssr:skyraider": "node dist/skyraider/server/server.mjs",
-    "deploy": "ng deploy skyraider --base-href=/skyraider/ --repo=https://github.com/sheryiu/skyraider.git"
+    "deploy": "ng deploy skyraider --base-href=/web-rtc-demo/ --repo=https://github.com/sheryiu/web-rtc-demo.git"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +23,9 @@
     "@angular/ssr": "^18.0.6",
     "chess.js": "^1.0.0-beta.8",
     "express": "^4.18.2",
+    "gzip-js": "^0.3.2",
+    "html5-qrcode": "^2.3.8",
+    "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "three": "^0.166.0",
     "tslib": "^2.3.0",
@@ -33,7 +36,9 @@
     "@angular/cli": "^18.0.6",
     "@angular/compiler-cli": "^18.0.0",
     "@types/express": "^4.17.17",
+    "@types/gzip-js": "^0.3.5",
     "@types/node": "^18.18.0",
+    "@types/qrcode": "^1.5.6",
     "@types/three": "^0.166.0",
     "angular-cli-ghpages": "^2.0.1",
     "autoprefixer": "^10.4.19",

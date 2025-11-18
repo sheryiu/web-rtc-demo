@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, untracked } from '@angular/core';
+import { afterNextRender, Component, computed, effect, inject, Injector, input, untracked } from '@angular/core';
 import { Color, PieceSymbol, Square } from 'chess.js';
 import { Mesh, Object3D, Object3DEventMap, Vector3, WebGLRenderer } from 'three';
 import { ModelLoaderService } from '../../core/model-loader.service';
@@ -62,6 +62,8 @@ export class ChessPieceComponent implements GameObject {
   private lastAnimationFrameAt: DOMHighResTimeStamp = 0;
   private use2D = this.gameController.use2DCamera.asReadonly();
 
+  private injector = inject(Injector)
+
   constructor() {
     effect(() => {
       const file = this.file();
@@ -80,27 +82,30 @@ export class ChessPieceComponent implements GameObject {
       this.targetPosition.y = isSelected ? 1 : 0;
       this.stateChangedAt = this.lastAnimationFrameAt;
     })
-    effect(() => {
-      const use2D = this.use2D();
-      if (!this.initialized) return;
-      // order of rotation matters!
-      if (use2D) {
-        untracked(() => {
-          this.object3D!.rotateX(Math.PI / 2)
-          this.object3D!.rotateZ(this.color() == 'b' ? (Math.PI / 2) : (Math.PI / -2))
-          this.object3D!.scale.setScalar(0.8)
-          this.targetPosition.z += 1;
-          this.stateChangedAt = 0;
-        })
-      } else {
-        untracked(() => {
-          this.object3D!.rotateZ(this.color() == 'b' ? (Math.PI / -2) : (Math.PI / 2))
-          this.object3D!.rotateX(-Math.PI / 2)
-          this.object3D!.scale.setScalar(1)
-          this.targetPosition.z -= 1;
-          this.stateChangedAt = 0;
-        })
-      }
+    afterNextRender(() => {
+      effect(() => {
+        const use2D = this.use2D();
+        const color = this.color();
+        // if (!this.initialized) return;
+        // order of rotation matters!
+        if (use2D == true) {
+          untracked(() => {
+            this.object3D!.rotateX(Math.PI / 2)
+            this.object3D!.rotateZ(color == 'b' ? (Math.PI / 2) : (Math.PI / -2))
+            this.object3D!.scale.setScalar(0.8)
+            this.targetPosition.z += 1;
+            this.stateChangedAt = 0;
+          })
+        } else if (use2D == false) {
+          untracked(() => {
+            this.object3D!.rotateZ(color == 'b' ? (Math.PI / -2) : (Math.PI / 2))
+            this.object3D!.rotateX(-Math.PI / 2)
+            this.object3D!.scale.setScalar(1)
+            this.targetPosition.z -= 1;
+            this.stateChangedAt = 0;
+          })
+        }
+      }, { injector: this.injector })
     })
   }
 
