@@ -45,10 +45,11 @@ export class RtcManagerService {
         }
       }
       this.pc!.onconnectionstatechange = (event) => {
+        console.log('Connection State Change', this.pc?.connectionState)
         switch (this.pc?.connectionState) {
           case 'closed':
           case 'failed': {
-            alert(`Connection ${ this.pc?.connectionState }`);
+            // alert(`Connection ${ this.pc?.connectionState }`);
             break;
           }
         }
